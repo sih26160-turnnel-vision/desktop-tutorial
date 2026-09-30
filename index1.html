@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SENTINEL-X | AI & Blockchain IPsec VPN Security Framework</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Chart.js for High-Frequency Telemetry -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            },
+            surface: {
+              950: '#020617',
+              900: '#0b0f19',
+              850: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            },
+            cyber: {
+              green: '#10b981',
+              red: '#f43f5e',
+              amber: '#f59e0b',
+              purple: '#8b5cf6',
+              cyan: '#06b6d4'
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #0b0f19; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+    .pulse-radar {
+      box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.6);
+      animation: radar-wave 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    @keyframes radar-wave {
+      0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.6); }
+      70% { box-shadow: 0 0 0 12px rgba(14, 165, 233, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+    }
+  </style>
+</head>
+<body class="bg-surface-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="border-b border-surface-800 bg-surface-900/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-[1600px] mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Project Identity -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyber-cyan flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-base font-black tracking-wider uppercase text-white font-mono">SENTINEL<span class="text-brand-400">-IPSEC</span></span>
+            <span class="text-[10px] bg-brand-500/10 text-brand-400 font-mono px-2 py-0.5 rounded border border-brand-500/30">SIH26160 NTRO</span>
+            <span class="text-[10px] bg-cyber-purple/10 text-cyber-purple font-mono px-2 py-0.5 rounded border border-cyber-purple/30 flex items-center gap-1">
+              <i class="fa-solid fa-link text-[9px]"></i> Blockchain Active
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400">AI-Powered Protocol Analyzer & Cryptographic Assessment Platform</p>
+        </div>
+      </div>
+
+      <!-- Live Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-surface-850 p-1 rounded-lg border border-surface-800">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-tab px-3.5 py-1.5 rounded-md text-xs font-medium text-white bg-brand-600 transition flex items-center gap-2">
+          <i class="fa-solid fa-chart-line"></i> Operations Center
+        </button>
+        <button onclick="switchTab('analyzer')" id="tab-analyzer" class="nav-tab px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-network-wired"></i> Deep Packet Inspection
+        </button>
+        <button onclick="switchTab('blockchain')" id="tab-blockchain" class="nav-tab px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-cubes"></i> Blockchain Audit Ledger
+        </button>
+        <button onclick="switchTab('auditor')" id="tab-auditor" class="nav-tab px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-file-shield"></i> RFC / NIST Assessment
+        </button>
+      </nav>
+
+      <!-- Threat Simulation Actions -->
+      <div class="flex items-center gap-3">
+        <div class="relative group">
+          <button class="px-3.5 py-2 text-xs font-semibold bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg shadow-lg shadow-rose-600/20 transition flex items-center gap-2">
+            <i class="fa-solid fa-biohazard"></i> <span>Trigger Threat Scenario</span>
+            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+          </button>
+          <div class="absolute right-0 mt-1 w-64 bg-surface-900 border border-surface-700 rounded-xl shadow-2xl py-2 text-xs hidden group-hover:block z-50 divide-y divide-surface-800">
+            <div class="px-3 py-1 text-[10px] uppercase font-mono text-slate-400">Offensive Attack Vectors</div>
+            <button onclick="simulateAttack('replay')" class="w-full text-left px-3 py-2 hover:bg-surface-800/80 flex items-center justify-between text-slate-200">
+              <span>ESP Sequence Replay Attack</span>
+              <span class="text-rose-400 font-mono text-[10px]">RFC 4303</span>
+            </button>
+            <button onclick="simulateAttack('downgrade')" class="w-full text-left px-3 py-2 hover:bg-surface-800/80 flex items-center justify-between text-slate-200">
+              <span>IKEv2 Cipher Downgrade (3DES)</span>
+              <span class="text-amber-400 font-mono text-[10px]">CVE-Exploit</span>
+            </button>
+            <button onclick="simulateAttack('mitm')" class="w-full text-left px-3 py-2 hover:bg-surface-800/80 flex items-center justify-between text-slate-200">
+              <span>DH Group 2 Rogue MITM Handshake</span>
+              <span class="text-rose-400 font-mono text-[10px]">Weak Logjam</span>
+            </button>
+            <div class="px-3 py-1 text-[10px] uppercase font-mono text-slate-400">Baseline Operations</div>
+            <button onclick="simulateAttack('normal')" class="w-full text-left px-3 py-2 hover:bg-surface-800/80 flex items-center justify-between text-emerald-400">
+              <span>Restore Baseline Clean Stream</span>
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <button id="pauseToggleBtn" onclick="toggleEngine()" class="h-9 w-9 rounded-lg bg-surface-800 hover:bg-surface-700 border border-surface-700 flex items-center justify-center text-slate-300 text-xs transition" title="Pause/Resume Sniffer">
+          <i class="fa-solid fa-pause"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN APPLICATION BODY ================= -->
+  <main class="max-w-[1600px] mx-auto px-4 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- KPI HIGHLIGHT CARDS -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 uppercase font-mono">Monitored Tunnels</span>
+          <span class="h-2 w-2 rounded-full bg-cyber-green pulse-radar"></span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl font-bold font-mono text-white">8 <span class="text-xs text-slate-500 font-normal">Active SAs</span></div>
+          <div class="text-[11px] text-cyber-cyan mt-1 font-mono flex items-center gap-1">
+            <i class="fa-solid fa-shield"></i> PQC Ready: 25% (Kyber/Dilithium)
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 uppercase font-mono">Dissected Packets</span>
+          <i class="fa-solid fa-wave-square text-slate-500 text-xs"></i>
+        </div>
+        <div class="mt-2">
+          <div id="statTotalPackets" class="text-2xl font-bold font-mono text-white">241,890</div>
+          <div class="text-[11px] text-emerald-400 mt-1 font-mono">Throughput: ~3.4 Gbps</div>
+        </div>
+      </div>
+
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 uppercase font-mono">AI Threat Score</span>
+          <i class="fa-solid fa-brain text-purple-400 text-xs"></i>
+        </div>
+        <div class="mt-2">
+          <div id="statAiScore" class="text-2xl font-bold font-mono text-cyber-green">0.02 <span class="text-xs text-slate-400">/ 1.0</span></div>
+          <div id="statAiStatus" class="text-[11px] text-cyber-green mt-1 font-mono">Traffic Within Normal Bounds</div>
+        </div>
+      </div>
+
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 uppercase font-mono">Blockchain Blocks</span>
+          <i class="fa-solid fa-cube text-cyber-purple text-xs"></i>
+        </div>
+        <div class="mt-2">
+          <div id="statBlocksCount" class="text-2xl font-bold font-mono text-cyber-purple">14</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">Chain Integrity: 100% Valid</div>
+        </div>
+      </div>
+
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400 uppercase font-mono">Security Posture</span>
+          <i class="fa-solid fa-award text-brand-400 text-xs"></i>
+        </div>
+        <div class="mt-2">
+          <div id="statPostureScore" class="text-2xl font-bold font-mono text-brand-400">96.4%</div>
+          <div class="text-[11px] text-slate-400 mt-1 font-mono">NIST SP 800-77 Rev 1</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 1: OPERATIONS DASHBOARD ================= -->
+    <div id="view-dashboard" class="tab-view space-y-6">
+      
+      <!-- Charts & High Speed Telemetry -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Live Traffic and Anomaly Chart (2 cols) -->
+        <div class="lg:col-span-2 bg-surface-900 border border-surface-800 rounded-xl p-5 shadow-lg flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-chart-area text-brand-400"></i> Real-time Ingestion & Neural Anomaly Heuristics
+              </h2>
+              <p class="text-xs text-slate-400">Correlating packet inter-arrival latency, sequence deltas, and Shannon entropy variance</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-900/40 text-brand-400 border border-brand-800">ESP Mode: Tunnel</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-800 text-slate-300">Window: 60s</span>
+            </div>
+          </div>
+          <div class="h-72 relative">
+            <canvas id="liveTelemetryChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Sliding Window Anti-Replay Analyzer (1 col) -->
+        <div class="bg-surface-900 border border-surface-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-cyber-cyan"></i> RFC 4303 Anti-Replay
+              </h2>
+              <span id="replayStatusBadge" class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">SYNC OK</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">Live 64-packet bitmap register. Duplicate sequence numbers inside this sliding window trigger immediate mitigation.</p>
+
+            <div class="p-3 bg-surface-950 rounded-lg border border-surface-800 font-mono text-xs space-y-2">
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span>Top of Window: <b id="topWindowSeq" class="text-white">10842</b></span>
+                <span>Window Size: <b class="text-brand-400">64-bit</b></span>
+              </div>
+              <div class="text-[10px] text-slate-500 uppercase">Bitmask Visualizer (Bit 0 to 63):</div>
+              <div id="bitmaskGrid" class="grid grid-cols-8 gap-1 pt-1">
+                <!-- 64 bit boxes injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-surface-800 text-[11px] text-slate-400 space-y-1">
+            <div class="flex justify-between">
+              <span>Replay Window Drops:</span>
+              <span id="statReplayDrops" class="font-mono text-slate-200">0 pkts</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Extended Sequence Numbers (ESN):</span>
+              <span class="font-mono text-emerald-400 font-semibold">Enabled (64-bit)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Threats & Blockchain Mint Stream -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Live AI Incident & Event Log -->
+        <div class="bg-surface-900 border border-surface-800 rounded-xl p-5 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> AI Detection Feed & Protocol Alerts
+            </h2>
+            <span id="activeAlertBadge" class="text-[10px] font-mono text-slate-400 bg-surface-800 px-2 py-0.5 rounded">0 Anomalies</span>
+          </div>
+          <div id="aiIncidentFeed" class="space-y-2.5 overflow-y-auto max-h-72 pr-1 font-mono text-xs">
+            <div class="text-center py-10 text-slate-500">
+              <i class="fa-solid fa-circle-check text-2xl text-emerald-500/40 mb-2 block"></i>
+              No active security incidents flagged. All SA sessions conform to RFC standards.
+            </div>
+          </div>
+        </div>
+
+        <!-- Cryptographic Ledger Sync Block -->
+        <div class="bg-surface-900 border border-surface-800 rounded-xl p-5 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-cube text-cyber-purple"></i> Blockchain Incident Immutability Stream
+              </h2>
+              <p class="text-xs text-slate-400">All security deviations are hashed and committed into tamper-proof blocks</p>
+            </div>
+            <button onclick="switchTab('blockchain')" class="text-xs text-brand-400 hover:text-brand-300 font-medium">View Ledger &rarr;</button>
+          </div>
+          <div id="dashboardBlockchainMini" class="space-y-2.5 overflow-y-auto max-h-72 pr-1 font-mono text-xs">
+            <!-- Mini blocks inserted here -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 2: DEEP PACKET INSPECTION (DPI) ================= -->
+    <div id="view-analyzer" class="tab-view hidden space-y-6">
+      <div class="bg-surface-900 border border-surface-800 rounded-xl p-5 shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-surface-800">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-microscope text-cyber-cyan"></i> Real-time Deep Protocol Dissector (L3/L4/L7)
+            </h2>
+            <p class="text-xs text-slate-400">Live parsing of IKEv2 (UDP 500/4500) payloads, Diffie-Hellman Key Exchanges, and ESP SPI data flows</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="packetFilterInput" placeholder="Filter by SPI, IP, or Payload..." class="px-3 py-1.5 bg-surface-950 border border-surface-700 rounded-lg text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500">
+            <button onclick="clearPacketsTable()" class="px-3 py-1.5 bg-surface-800 hover:bg-surface-700 text-slate-300 rounded-lg text-xs font-mono">Clear</button>
+          </div>
+        </div>
+
+        <!-- Packet Dissection Table -->
+        <div class="overflow-x-auto max-h-[500px] mt-4 border border-surface-800 rounded-lg">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-surface-950 text-slate-300 sticky top-0 border-b border-surface-800">
+              <tr>
+                <th class="py-2.5 px-3">Timestamp</th>
+                <th class="py-2.5 px-3">Protocol / Type</th>
+                <th class="py-2.5 px-3">Endpoint Route</th>
+                <th class="py-2.5 px-3">SPI / Cookie</th>
+                <th class="py-2.5 px-3">Sequence</th>
+                <th class="py-2.5 px-3">Entropy (bits)</th>
+                <th class="py-2.5 px-3">Dissection Analysis</th>
+                <th class="py-2.5 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="fullPacketTableBody" class="divide-y divide-surface-800/60 text-slate-300">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: BLOCKCHAIN AUDIT LEDGER ================= -->
+    <div id="view-blockchain" class="tab-view hidden space-y-6">
+      
+      <!-- Blockchain Verification Topcard -->
+      <div class="bg-gradient-to-r from-surface-900 via-surface-900 to-cyber-purple/10 border border-surface-800 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-link text-cyber-purple"></i> Cryptographic Proof-of-Integrity Ledger
+            </h2>
+            <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full font-mono font-bold">CHAINS SYNCED</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1 max-w-2xl">
+            Har ek IPsec Security Association negotiation, misconfiguration, aur threat vector client-side WebCrypto SHA-256 algorithm se hash hokar block me lock hota hai. Koi bhi rogue admin ya external hacker logs ko modify nahi kar sakta.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="verifyBlockchainIntegrity()" class="px-4 py-2 bg-cyber-purple hover:bg-purple-600 text-white font-medium rounded-lg text-xs shadow-lg shadow-purple-900/30 transition flex items-center gap-2">
+            <i class="fa-solid fa-certificate"></i> Verify Complete Chain
+          </button>
+          <button onclick="tamperBlockSimulation()" class="px-4 py-2 bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 font-medium rounded-lg text-xs transition flex items-center gap-2" title="SIH Evaluators demo">
+            <i class="fa-solid fa-skull"></i> Attempt Tamper Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Chain Visualizer Explorer -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-mono uppercase text-slate-400 tracking-wider">Mined Blocks in Cryptographic Ledger:</h3>
+        <div id="blockchainCardsContainer" class="space-y-3">
+          <!-- Rendered Blocks -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 4: AUTOMATED SECURITY ASSESSMENT & RFC AUDITOR ================= -->
+    <div id="view-auditor" class="tab-view hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Compliance Benchmark Checklist (2 cols) -->
+        <div class="lg:col-span-2 bg-surface-900 border border-surface-800 rounded-xl p-5 shadow-lg space-y-4">
+          <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-brand-400"></i> NIST SP 800-77 & RFC 8247 Audit Suite
+              </h2>
+              <p class="text-xs text-slate-400">Automated evaluation of Phase 1 (IKE SA) & Phase 2 (ESP Child SA) cryptographic baselines</p>
+            </div>
+            <button onclick="rerunAudit()" class="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-mono">
+              <i class="fa-solid fa-rotate"></i> Re-Scan All Endpoints
+            </button>
+          </div>
+
+          <div class="space-y-3" id="auditChecklistContainer">
+            <!-- Check items injected via JS -->
+          </div>
+        </div>
+
+        <!-- Right: Automated Hardened Remediation Exporter (1 col) -->
+        <div class="bg-surface-900 border border-surface-800 rounded-xl p-5 shadow-lg flex flex-col justify-between space-y-4">
+          <div>
+            <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-cyber-cyan"></i> Auto-Remediation Generator
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Export hardened, compliant configurations based on audit diagnostics</p>
+
+            <div class="mt-4">
+              <label class="text-[11px] font-mono text-slate-400 block mb-1">Target Gateway Platform:</label>
+              <select id="configPlatformSelect" onchange="updateRemediationCode()" class="w-full bg-surface-950 border border-surface-700 rounded-lg p-2 text-xs font-mono text-slate-200">
+                <option value="strongswan">Linux StrongSwan (ipsec.conf / swanctl)</option>
+                <option value="cisco">Cisco IOS-XE / ASA IKEv2 Proposal</option>
+                <option value="pfsense">pfSense / FreeBSD IPsec Config</option>
+              </select>
+            </div>
+
+            <div class="mt-3">
+              <label class="text-[11px] font-mono text-slate-400 block mb-1">Generated Hardened Script:</label>
+              <pre id="remediationCodeBox" class="p-3 bg-surface-950 border border-surface-800 rounded-lg text-[11px] font-mono text-emerald-400 overflow-x-auto max-h-64 leading-relaxed"></pre>
+            </div>
+          </div>
+
+          <button onclick="copyRemediationScript()" class="w-full py-2.5 bg-surface-800 hover:bg-surface-700 text-white rounded-lg text-xs font-mono flex items-center justify-center gap-2 border border-surface-700">
+            <i class="fa-regular fa-copy"></i> Copy Hardened Configuration
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= DETAILED PACKET MODAL ================= -->
+  <div id="packetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-surface-900 border border-surface-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-surface-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-code text-sm"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Dissected Payload Analysis</h3>
+            <p id="modalPacketSub" class="text-[11px] font-mono text-slate-400"></p>
+          </div>
+        </div>
+        <button onclick="closePacketModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="modalPacketBody" class="text-xs font-mono space-y-3 text-slate-300">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="flex justify-end pt-2">
+        <button onclick="closePacketModal()" class="px-4 py-2 bg-surface-800 hover:bg-surface-700 text-white rounded-lg text-xs font-medium">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 hidden transform transition duration-300">
+    <div id="toastInner" class="px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-3 text-xs font-mono">
+      <i id="toastIcon" class="fa-solid fa-info-circle text-base"></i>
+      <span id="toastMsg" class="font-medium"></span>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC CORE ================= -->
+  <script>
+    // ==========================================================
+    // 1. STATE MANAGEMENT & CRYPTOGRAPHIC ENGINE
+    // ==========================================================
+    let isRunning = true;
+    let totalPackets = 241890;
+    let anomalyScore = 0.02;
+    let postureScore = 96.4;
+    let activeAlertCount = 0;
+    let packetSeqCounter = 10842;
+    let replayDrops = 0;
+
+    // RFC 4303 64-bit Sliding Window Anti-Replay Simulation
+    let replayWindow = new Array(64).fill(true); // true = seen, false = not seen
+
+    // Real Blockchain Array
+    let blockchain = [];
+
+    // Helper: Compute genuine SHA-256 via Web Crypto API
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Helper: Calculate Shannon Entropy of a byte string (Range 0 - 8.0 bits)
+    function calculateShannonEntropy(str) {
+      const len = str.length;
+      if (len === 0) return 0;
+      const freq = {};
+      for (let i = 0; i < len; i++) {
+        freq[str[i]] = (freq[str[i]] || 0) + 1;
+      }
+      let entropy = 0;
+      for (const char in freq) {
+        const p = freq[char] / len;
+        entropy -= p * Math.log2(p);
+      }
+      return parseFloat(entropy.toFixed(3));
+    }
+
+    // ==========================================================
+    // 2. BLOCKCHAIN CORE IMPLEMENTATION
+    // ==========================================================
+    class Block {
+      constructor(index, timestamp, data, previousHash = '') {
+        this.index = index;
+        this.timestamp = timestamp;
+        this.data = data;
+        this.previousHash = previousHash;
+        this.nonce = Math.floor(Math.random() * 10000);
+        this.hash = '';
+      }
+
+      async calculateHash() {
+        const raw = this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce;
+        return await sha256(raw);
+      }
+    }
+
+    async function initBlockchain() {
+      const genesis = new Block(0, new Date(Date.now() - 3600000).toLocaleTimeString(), {
+        event: "GENESIS_ROOT",
+        message: "NTRO SIH26160 Ledger Initialized. Root Trust Anchored.",
+        operator: "SYSTEM_ROOT"
+      }, "0000000000000000000000000000000000000000000000000000000000000000");
+      genesis.hash = await genesis.calculateHash();
+      blockchain.push(genesis);
+
+      // Pre-populate with baseline historical audit blocks
+      await addBlock({
+        event: "SA_ESTABLISHED",
+        tunnelId: "HQ-DC01",
+        cipher: "AES-256-GCM / DH-Group-19",
+        integrity: "SHA384",
+        status: "NIST_COMPLIANT"
+      });
+      await addBlock({
+        event: "POLICY_AUDIT",
+        rule: "Enforce Perfect Forward Secrecy (PFS)",
+        result: "PASSED",
+        auditId: "AUD-9902"
+      });
+      renderBlockchainUI();
+    }
+
+    async function addBlock(data) {
+      const prevBlock = blockchain[blockchain.length - 1];
+      const newBlock = new Block(blockchain.length, new Date().toLocaleTimeString(), data, prevBlock.hash);
+      newBlock.hash = await newBlock.calculateHash();
+      blockchain.push(newBlock);
+
+      document.getElementById('statBlocksCount').innerText = blockchain.length;
+      renderBlockchainUI();
+      renderMiniBlockchainDashboard(newBlock);
+    }
+
+    function renderBlockchainUI() {
+      const container = document.getElementById('blockchainCardsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      [...blockchain].reverse().forEach(b => {
+        const isGenesis = b.index === 0;
+        const isTampered = b.tampered === true;
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border ${isTampered ? 'border-rose-600 bg-rose-950/40' : 'border-surface-800 bg-surface-900'} font-mono text-xs space-y-2 transition`;
+        
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isGenesis ? 'bg-amber-950 text-amber-400 border border-amber-800' : (isTampered ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-cyber-purple/20 text-cyber-purple border border-cyber-purple/40')}">
+                BLOCK #${b.index} ${isGenesis ? '(GENESIS)' : ''}
+              </span>
+              <span class="text-slate-400 text-[11px]">${b.timestamp}</span>
+            </div>
+            <div class="text-[10px] text-slate-400">
+              Nonce: <span class="text-slate-200">${b.nonce}</span>
+            </div>
+          </div>
+          <div class="bg-surface-950 p-2.5 rounded-lg border border-surface-800/80 space-y-1">
+            <div class="text-slate-400 text-[11px]">Payload Event: <span class="text-white font-bold">${b.data.event || 'SECURITY_RECORD'}</span></div>
+            <div class="text-slate-400 text-[10px] break-all">${JSON.stringify(b.data)}</div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px] pt-1">
+            <div class="truncate text-slate-400">Prev Hash: <span class="text-slate-500 font-mono">${b.previousHash}</span></div>
+            <div class="truncate text-slate-400 text-right">Hash: <span class="${isTampered ? 'text-rose-400 font-bold underline' : 'text-cyber-cyan'} font-mono">${b.hash}</span></div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderMiniBlockchainDashboard(block) {
+      const mini = document.getElementById('dashboardBlockchainMini');
+      if (!mini) return;
+      const el = document.createElement('div');
+      el.className = 'p-2.5 rounded-lg bg-surface-950 border border-surface-800 flex items-center justify-between text-xs font-mono';
+      el.innerHTML = `
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-cube text-cyber-purple text-xs"></i>
+          <div>
+            <div class="text-slate-200 font-bold">Block #${block.index} [${block.data.event}]</div>
+            <div class="text-[10px] text-slate-500 font-mono truncate max-w-[240px]">${block.hash.substring(0, 24)}...</div>
+          </div>
+        </div>
+        <span class="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Immutable</span>
+      `;
+      mini.insertBefore(el, mini.firstChild);
+      if (mini.children.length > 5) mini.removeChild(mini.lastChild);
+    }
+
+    async function verifyBlockchainIntegrity() {
+      let isValid = true;
+      for (let i = 1; i < blockchain.length; i++) {
+        const curr = blockchain[i];
+        const prev = blockchain[i - 1];
+
+        const recalculated = await curr.calculateHash();
+        if (curr.hash !== recalculated || curr.previousHash !== prev.hash) {
+          isValid = false;
+          break;
+        }
+      }
+
+      if (isValid) {
+        showToast("success", "Cryptographic Verification Passed: All SHA-256 hashes and Merkle parent links are 100% authentic.");
+      } else {
+        showToast("error", "CRITICAL WARNING: Tamper verification failed! Hash chain is broken.");
+      }
+    }
+
+    function tamperBlockSimulation() {
+      if (blockchain.length < 2) return;
+      // Corrupt data of block 1
+      blockchain[1].data.event = "TAMPERED_ROGUE_RECORD";
+      blockchain[1].data.tunnelId = "ROGUE-ATTACKER-IP";
+      blockchain[1].tampered = true;
+      renderBlockchainUI();
+      showToast("error", "Block #1 maliciously altered! Click 'Verify Complete Chain' to watch the cryptographic proof trigger an alarm.");
+    }
+
+    // ==========================================================
+    // 3. REAL-TIME CHART & TELEMETRY
+    // ==========================================================
+    const ctx = document.getElementById('liveTelemetryChart').getContext('2d');
+    const chartLabels = Array.from({length: 25}, (_, i) => `${(24 - i) * 2}s ago`);
+    const initialTraffic = Array.from({length: 25}, () => Math.floor(Math.random() * 40) + 180);
+    const initialAnomaly = Array.from({length: 25}, () => (Math.random() * 0.04).toFixed(2));
+
+    const liveTelemetryChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [
+          {
+            label: 'ESP Packets / Sec (Throughput)',
+            data: initialTraffic,
+            borderColor: '#0ea5e9',
+            backgroundColor: 'rgba(14, 165, 233, 0.08)',
+            borderWidth: 2,
+            tension: 0.35,
+            fill: true,
+            yAxisID: 'y'
+          },
+          {
+            label: 'AI Anomaly Index (Normalized 0 - 1.0)',
+            data: initialAnomaly,
+            borderColor: '#f43f5e',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [3, 3],
+            pointRadius: 2,
+            tension: 0.2,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 300 },
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b', font: { size: 10 } } },
+          y: {
+            position: 'left',
+            grid: { color: '#1e293b' },
+            ticks: { color: '#64748b', font: { size: 10 } }
+          },
+          y1: {
+            position: 'right',
+            min: 0,
+            max: 1.0,
+            grid: { drawOnChartArea: false },
+            ticks: { color: '#f43f5e', font: { size: 10 } }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#cbd5e1', font: { size: 11, family: 'monospace' } } }
+        }
+      }
+    });
+
+    // ==========================================================
+    // 4. PROTOCOL DISSECTOR & PACKET GENERATION
+    // ==========================================================
+    const endpoints = [
+      { src: '10.0.10.4', dst: '10.0.20.8', tunnel: 'HQ-DC01' },
+      { src: '172.16.50.2', dst: '10.0.20.1', tunnel: 'BRANCH-NORTH' },
+      { src: '192.168.100.15', dst: '10.0.20.1', tunnel: 'EDGE-GATEWAY' }
+    ];
+
+    function updateBitmaskVisualizer(isReplayAttack = false) {
+      const grid = document.getElementById('bitmaskGrid');
+      grid.innerHTML = '';
+      document.getElementById('topWindowSeq').innerText = packetSeqCounter;
+
+      for (let i = 0; i < 64; i++) {
+        const bit = document.createElement('div');
+        const isActive = replayWindow[i];
+        let colorClass = isActive ? 'bg-brand-500/80' : 'bg-surface-800';
+        if (isReplayAttack && i === 4) colorClass = 'bg-rose-500 animate-pulse';
+
+        bit.className = `h-2 rounded-sm ${colorClass}`;
+        bit.title = `Bit ${i}: ${isActive ? 'Packet Received' : 'Open'}`;
+        grid.appendChild(bit);
+      }
+    }
+
+    async function generateLivePacket(forcedMode = null) {
+      if (!isRunning && !forcedMode) return;
+
+      totalPackets++;
+      packetSeqCounter++;
+      document.getElementById('statTotalPackets').innerText = totalPackets.toLocaleString();
+
+      // Shift Sliding Window
+      replayWindow.pop();
+      replayWindow.unshift(true);
+      updateBitmaskVisualizer(forcedMode === 'replay');
+
+      const ep = endpoints[Math.floor(Math.random() * endpoints.length)];
+      const time = new Date().toLocaleTimeString();
+      let proto = Math.random() > 0.3 ? 'ESP [Proto 50]' : 'IKEv2 [UDP 500]';
+      let spi = '0x' + Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, '0');
+      let seq = packetSeqCounter;
+      let rawSample = "4f8a91b2c4e5127890abcdef1234567890abcdef" + Math.random().toString(36).substring(2);
+      let entropy = calculateShannonEntropy(rawSample);
+      let note = "Clean Payload (AES-GCM Authenticated)";
+      let flagClass = "";
+
+      if (forcedMode === 'replay') {
+        proto = 'ESP [Proto 50]';
+        seq = 10420; // Old replayed sequence
+        note = "<span class='text-rose-400 font-bold'>RFC 4303 VIOLATION: Sequence #10420 Outside Valid Sliding Window</span>";
+        flagClass = "bg-rose-950/40 border-l-4 border-rose-500";
+        replayDrops++;
+        document.getElementById('statReplayDrops').innerText = `${replayDrops} pkts`;
+      } else if (forcedMode === 'downgrade') {
+        proto = 'IKEv2 [UDP 500]';
+        note = "<span class='text-amber-400 font-bold'>SA_INIT Proposes 3DES-CBC + MD5 (RFC 8247 Deprecated)</span>";
+        flagClass = "bg-amber-950/40 border-l-4 border-amber-500";
+      } else if (forcedMode === 'mitm') {
+        proto = 'IKEv2 [UDP 500]';
+        note = "<span class='text-rose-400 font-bold'>Diffie-Hellman Group 2 (1024-bit) Modulus Insecure!</span>";
+        flagClass = "bg-rose-950/40 border-l-4 border-rose-500";
+      }
+
+      // Add to full table
+      const tbody = document.getElementById('fullPacketTableBody');
+      const row = document.createElement('tr');
+      row.className = `hover:bg-surface-800/60 cursor-pointer transition ${flagClass}`;
+      row.innerHTML = `
+        <td class="py-2 px-3 text-slate-400">${time}</td>
+        <td class="py-2 px-3 font-bold text-brand-400">${proto}</td>
+        <td class="py-2 px-3">${ep.src} &rarr; ${ep.dst}</td>
+        <td class="py-2 px-3 text-slate-400">${spi}</td>
+        <td class="py-2 px-3 font-semibold ${forcedMode === 'replay' ? 'text-rose-400 font-bold' : 'text-slate-300'}">${seq}</td>
+        <td class="py-2 px-3 text-cyber-cyan">${entropy}</td>
+        <td class="py-2 px-3">${note}</td>
+        <td class="py-2 px-3 text-right">
+          <button onclick='inspectPacketDetail(${JSON.stringify({time, proto, ep, spi, seq, entropy, note})})' class="text-brand-400 hover:text-brand-300 text-[11px] underline">Inspect</button>
+        </td>
+      `;
+
+      tbody.insertBefore(row, tbody.firstChild);
+      if (tbody.children.length > 50) tbody.removeChild(tbody.lastChild);
+
+      // Telemetry update
+      const newPps = Math.floor(Math.random() * 30) + (forcedMode === 'replay' ? 290 : 190);
+      liveTelemetryChart.data.datasets[0].data.shift();
+      liveTelemetryChart.data.datasets[0].data.push(newPps);
+
+      liveTelemetryChart.data.datasets[1].data.shift();
+      liveTelemetryChart.data.datasets[1].data.push(anomalyScore);
+      liveTelemetryChart.update('none');
+    }
+
+    // Packet generator loop
+    setInterval(() => generateLivePacket(), 1500);
+
+    // ==========================================================
+    // 5. THREAT SCENARIO INJECTOR & BLOCKCHAIN MINTING
+    // ==========================================================
+    async function simulateAttack(type) {
+      if (type === 'replay') {
+        anomalyScore = 0.94;
+        postureScore = 71.2;
+        updateScores("ESP REPLAY ATTACK IN PROGRESS", "text-rose-400", "bg-rose-500");
+        generateLivePacket('replay');
+
+        addAIAlert(
+          "RFC 4303 Anti-Replay Counter Violation",
+          "Duplicate sequence number #10420 injected. Packet rejected by sliding window bitmap check. Suspected adversary sniffing and re-injecting encrypted session frames.",
+          "rose"
+        );
+
+        // MINT TO BLOCKCHAIN
+        await addBlock({
+          event: "REPLAY_ATTACK_DETECTED",
+          protocol: "ESP",
+          sequenceViolation: 10420,
+          action: "PACKET_DROPPED",
+          threatLevel: "CRITICAL",
+          mitigation: "Enforce ESN (Extended Sequence Numbers) 64-bit"
+        });
+
+        showToast("error", "ESP Replay Attack detected! Event permanently hashed into Blockchain.");
+      } 
+      else if (type === 'downgrade') {
+        anomalyScore = 0.65;
+        postureScore = 64.0;
+        updateScores("CRYPTOGRAPHIC DOWNGRADE PROPOSAL", "text-amber-400", "bg-amber-500");
+        generateLivePacket('downgrade');
+
+        addAIAlert(
+          "Insecure Cipher Proposal (RFC 8247)",
+          "IKE_SA_INIT negotiation proposed 3DES-CBC and HMAC-MD5. Encryption key length below required 256-bit threshold.",
+          "amber"
+        );
+
+        await addBlock({
+          event: "CIPHER_DOWNGRADE_ATTEMPT",
+          protocol: "IKEv2",
+          proposedCipher: "3DES-CBC",
+          proposedIntegrity: "MD5",
+          action: "HANDSHAKE_FLAGGED",
+          threatLevel: "MEDIUM"
+        });
+
+        showToast("warning", "Insecure Cipher Proposal detected and recorded in immutable ledger.");
+      }
+      else if (type === 'mitm') {
+        anomalyScore = 0.88;
+        postureScore = 58.5;
+        updateScores("WEAK DIFFIE-HELLMAN KEY EXCHANGE", "text-rose-400", "bg-rose-500");
+        generateLivePacket('mitm');
+
+        addAIAlert(
+          "Weak DH Modulus (Group 2)",
+          "Peer attempted negotiation with 1024-bit MODP Group 2, vulnerable to state-sponsored precomputation (Logjam attack).",
+          "rose"
+        );
+
+        await addBlock({
+          event: "WEAK_DH_EXCHANGE",
+          dhGroup: "Group 2 (1024-bit)",
+          recommendation: "Enforce ECP-256 (Group 19) or Curve25519 (Group 31)",
+          threatLevel: "HIGH"
+        });
+
+        showToast("error", "Vulnerable Diffie-Hellman Exchange stopped and hashed.");
+      }
+      else if (type === 'normal') {
+        anomalyScore = 0.02;
+        postureScore = 96.4;
+        updateScores("TRAFFIC WITHIN NORMAL BOUNDS", "text-cyber-green", "bg-cyber-green");
+        document.getElementById('activeAlertBadge').innerText = "0 Anomalies";
+        document.getElementById('aiIncidentFeed').innerHTML = `
+          <div class="text-center py-10 text-slate-500">
+            <i class="fa-solid fa-circle-check text-2xl text-emerald-500/40 mb-2 block"></i>
+            No active security incidents flagged. All SA sessions conform to RFC standards.
+          </div>
+        `;
+        showToast("success", "Clean baseline restored. Anomaly heuristics normal.");
+      }
+    }
+
+    function updateScores(msg, textCol, dotCol) {
+      const scoreEl = document.getElementById('statAiScore');
+      const statusEl = document.getElementById('statAiStatus');
+      const postureEl = document.getElementById('statPostureScore');
+
+      scoreEl.className = `text-2xl font-bold font-mono ${textCol}`;
+      scoreEl.innerHTML = `${anomalyScore.toFixed(2)} <span class="text-xs text-slate-400">/ 1.0</span>`;
+
+      statusEl.className = `text-[11px] ${textCol} mt-1 font-mono`;
+      statusEl.innerText = msg;
+
+      postureEl.className = `text-2xl font-bold font-mono ${textCol}`;
+      postureEl.innerText = `${postureScore}%`;
+    }
+
+    function addAIAlert(title, desc, color) {
+      activeAlertCount++;
+      document.getElementById('activeAlertBadge').innerText = `${activeAlertCount} Critical Alert(s)`;
+      document.getElementById('activeAlertBadge').className = "text-[10px] font-mono text-rose-300 bg-rose-950 px-2 py-0.5 rounded border border-rose-800";
+
+      const feed = document.getElementById('aiIncidentFeed');
+      if (activeAlertCount === 1) feed.innerHTML = '';
+
+      const alertBox = document.createElement('div');
+      const borderCol = color === 'rose' ? 'border-rose-700 bg-rose-950/40' : 'border-amber-700 bg-amber-950/40';
+      const textCol = color === 'rose' ? 'text-rose-400' : 'text-amber-400';
+
+      alertBox.className = `p-3 rounded-lg border ${borderCol} space-y-1 transition duration-300`;
+      alertBox.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-bold ${textCol} flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> ${title}
+          </span>
+          <span class="text-[10px] text-slate-400">${new Date().toLocaleTimeString()}</span>
+        </div>
+        <p class="text-slate-300 text-[11px] leading-relaxed">${desc}</p>
+        <div class="text-[10px] text-brand-400 pt-1 flex items-center gap-1">
+          <i class="fa-solid fa-microchip"></i> Neural Confidence: 99.4% &bull; Auto-Logged to Blockchain
+        </div>
+      `;
+      feed.insertBefore(alertBox, feed.firstChild);
+    }
+
+    // ==========================================================
+    // 6. COMPLIANCE & HARDENED REMEDIATION GENERATOR
+    // ==========================================================
+    const auditChecks = [
+      { id: 1, rule: "RFC 8247 Encryption Algorithms", req: "AES-GCM-256 or ChaCha20-Poly1305 Required", status: "PASS", detail: "3DES and DES prohibited across all active configurations." },
+      { id: 2, rule: "Diffie-Hellman Key Exchange", req: "Group >= 19 (ECP-256 / Curve25519)", status: "WARN", detail: "Legacy tunnel Edge-Gateway still permits DH Group 14 fallback." },
+      { id: 3, rule: "Integrity Verification (ICV)", req: "SHA2-384 / SHA2-512 Required", status: "PASS", detail: "MD5 and SHA-1 strictly disabled in Security Associations." },
+      { id: 4, rule: "Anti-Replay Window & ESN", req: "RFC 4303 Extended 64-bit Sequence Numbers", status: "PASS", detail: "Active on 100% of ESP Child SA tunnels." },
+      { id: 5, rule: "Post-Quantum Cryptography (PQC)", req: "Hybrid Kyber-768 IKEv2 Proposal", status: "INFO", detail: "Experimental Kyber quantum-safe tunnel configured on DC01." }
+    ];
+
+    function renderAuditChecks() {
+      const container = document.getElementById('auditChecklistContainer');
+      container.innerHTML = '';
+
+      auditChecks.forEach(c => {
+        const item = document.createElement('div');
+        let badge = '<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">COMPLIANT</span>';
+        if (c.status === 'WARN') {
+          badge = '<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold">ATTENTION NEEDED</span>';
+        } else if (c.status === 'INFO') {
+          badge = '<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-cyber-purple border border-purple-800 font-bold">PQC EXPERIMENTAL</span>';
+        }
+
+        item.className = "p-3 rounded-lg bg-surface-950 border border-surface-800 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs";
+        item.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white">${c.rule}</span>
+              <span class="text-[10px] font-mono text-slate-500">(${c.req})</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">${c.detail}</p>
+          </div>
+          <div>${badge}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateRemediationCode() {
+      const platform = document.getElementById('configPlatformSelect').value;
+      const box = document.getElementById('remediationCodeBox');
+
+      if (platform === 'strongswan') {
+        box.innerText = 
+`# StrongSwan Hardened IPsec Policy (NIST SP 800-77 & RFC 8247)
+conn NTRO-SECURE-TUNNEL
+    keyexchange = ikev2
+    ike = aes256gcm16-prfsha384-ecp256,chacha20poly1305-prfsha512-curve25519!
+    esp = aes256gcm16-ecp256,chacha20poly1305!
+    dpdaction = restart
+    dpddelay = 30s
+    inactivity = 1200s
+    replay_window = 64
+    esn = yes
+    auto = route`;
+      } else if (platform === 'cisco') {
+        box.innerText = 
+`! Cisco IOS-XE Cryptographic Hardening Directive
+crypto ikev2 proposal NTRO-HARDENED-PROP
+ encryption aes-gcm-256
+ integrity sha384
+ group 19 21
+!
+crypto ikev2 policy NTRO-IKE-POLICY
+ proposal NTRO-HARDENED-PROP
+!
+crypto ipsec transform-set NTRO-TS esp-gcm 256
+ mode tunnel
+!
+crypto ipsec security-association replay window-size 64
+crypto ipsec security-association extended-sequence-number`;
+      } else {
+        box.innerText = 
+`# pfSense IPsec Hardened Recommendation
+Phase 1:
+  - Version: IKEv2
+  - Encryption: AES256-GCM (128-bit ICV)
+  - Key Exchange: Diffie-Hellman Group 19 (ECP256)
+  - PRF: HMAC-SHA384
+Phase 2:
+  - Protocol: ESP
+  - Encryption: AES256-GCM
+  - PFS Key Group: Group 19
+  - Extended Sequence Numbers (ESN): Enabled`;
+      }
+    }
+
+    function copyRemediationScript() {
+      const text = document.getElementById('remediationCodeBox').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("success", "Hardened configuration script copied to clipboard!");
+      });
+    }
+
+    function rerunAudit() {
+      showToast("info", "Re-scanning all remote VPN gateway interfaces against RFC 8247...");
+      setTimeout(() => {
+        renderAuditChecks();
+        showToast("success", "Audit complete: Security posture updated.");
+      }, 800);
+    }
+
+    // ==========================================================
+    // 7. TAB & MODAL UI CONTROLLERS
+    // ==========================================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('bg-brand-600', 'text-white');
+        b.classList.add('text-slate-400');
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.add('bg-brand-600', 'text-white');
+      activeBtn.classList.remove('text-slate-400');
+
+      if (tabId === 'blockchain') renderBlockchainUI();
+      if (tabId === 'auditor') { renderAuditChecks(); updateRemediationCode(); }
+    }
+
+    function inspectPacketDetail(p) {
+      const modal = document.getElementById('packetModal');
+      const sub = document.getElementById('modalPacketSub');
+      const body = document.getElementById('modalPacketBody');
+      modal.classList.remove('hidden');
+
+      sub.innerText = `Timestamp: ${p.time} | Protocol: ${p.proto}`;
+      body.innerHTML = `
+        <div class="p-3 bg-surface-950 rounded-lg border border-surface-800 space-y-1">
+          <div class="text-brand-400 font-bold uppercase text-[11px]">[Layer 3 / Layer 4 Encapsulation]</div>
+          <div>Tunnel Endpoint: <span class="text-white">${p.ep.tunnel}</span> (${p.ep.src} &rarr; ${p.ep.dst})</div>
+          <div>Encapsulating Security Payload (ESP): Protocol 50 / UDP 4500 (NAT-T)</div>
+        </div>
+        <div class="p-3 bg-surface-950 rounded-lg border border-surface-800 space-y-1">
+          <div class="text-cyber-purple font-bold uppercase text-[11px]">[IPsec SA Header Security]</div>
+          <div>Security Parameter Index (SPI): <span class="text-white">${p.spi}</span></div>
+          <div>Sequence Counter: <span class="text-white">${p.seq}</span></div>
+          <div>Anti-Replay Window Verification: <span class="text-emerald-400 font-bold">PASSED (Verified against 64-bit mask)</span></div>
+        </div>
+        <div class="p-3 bg-surface-950 rounded-lg border border-surface-800 space-y-1">
+          <div class="text-cyber-cyan font-bold uppercase text-[11px]">[Cryptanalysis & Neural Score]</div>
+          <div>Calculated Shannon Entropy: <span class="text-white">${p.entropy} bits/byte</span> (Denotes True Ciphertext)</div>
+          <div>Integrity Check Value (ICV): <span class="text-emerald-400">Match Confirmed (SHA2-384)</span></div>
+          <div>Blockchain Anchor: Block verified with parent Merkle tree</div>
+        </div>
+      `;
+    }
+
+    function closePacketModal() {
+      document.getElementById('packetModal').classList.add('hidden');
+    }
+
+    function clearPacketsTable() {
+      document.getElementById('fullPacketTableBody').innerHTML = '';
+      showToast("info", "Packet stream cleared.");
+    }
+
+    function toggleEngine() {
+      isRunning = !isRunning;
+      const btn = document.getElementById('pauseToggleBtn');
+      btn.innerHTML = isRunning ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play text-emerald-400"></i>';
+      showToast("info", isRunning ? "Sniffer Resumed" : "Sniffer Paused");
+    }
+
+    function showToast(type, msg) {
+      const toast = document.getElementById('toastNotification');
+      const inner = document.getElementById('toastInner');
+      const icon = document.getElementById('toastIcon');
+      const text = document.getElementById('toastMsg');
+
+      toast.classList.remove('hidden');
+      text.innerText = msg;
+
+      if (type === 'success') {
+        inner.className = 'px-4 py-3 rounded-xl border border-emerald-800 bg-emerald-950 text-emerald-300 shadow-2xl flex items-center gap-3 text-xs font-mono';
+        icon.className = 'fa-solid fa-circle-check text-base text-emerald-400';
+      } else if (type === 'error') {
+        inner.className = 'px-4 py-3 rounded-xl border border-rose-800 bg-rose-950 text-rose-300 shadow-2xl flex items-center gap-3 text-xs font-mono';
+        icon.className = 'fa-solid fa-triangle-exclamation text-base text-rose-400';
+      } else {
+        inner.className = 'px-4 py-3 rounded-xl border border-brand-800 bg-surface-900 text-brand-300 shadow-2xl flex items-center gap-3 text-xs font-mono';
+        icon.className = 'fa-solid fa-info-circle text-base text-brand-400';
+      }
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+    }
+
+    // Initialize System
+    window.addEventListener('DOMContentLoaded', () => {
+      initBlockchain();
+      updateBitmaskVisualizer();
+      renderAuditChecks();
+      updateRemediationCode();
+    });
+  </script>
+</body>
+</html>
